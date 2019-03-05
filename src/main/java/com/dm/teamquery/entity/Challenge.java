@@ -15,17 +15,17 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "challenge")
-public class Challenge extends Auditable<String>  {
+public class Challenge  extends Auditable<UUID>  {
 
-    @Id
-    @Type(type="uuid-char")
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "challengeid")
-    private UUID challengeId;
+//    @Id
+//    @Type(type="uuid-char")
+//    @GeneratedValue(generator = "UUID")
+//    @GenericGenerator(
+//            name = "UUID",
+//            strategy = "org.hibernate.id.UUIDGenerator"
+//    )
+//    @Column(name = "challengeid")
+//    private UUID challengeId;
 
     @NotNull(message = "Question cannot be blank")
     @Size(min = 3, message = "Question must be more than 6 characters")

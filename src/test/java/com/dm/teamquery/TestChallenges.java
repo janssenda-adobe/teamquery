@@ -38,6 +38,8 @@ public class TestChallenges {
     @Inject
     ChallengeRepository cr;
 
+
+
     @Test
     public void TestUpdate() throws EntityUpdateException, SearchFailedException, Exception {
 
@@ -99,17 +101,17 @@ public class TestChallenges {
 //        }
 //    }
 //
-    @Test
-    public void TestDelete() throws  Exception {
-
-        UUID id  = challengeService.basicSearch("").get(0).getChallengeId();
-        cr.deleteEntityById(id);
-        assertFalse(cr.existsEntity(id));
-
-        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(id));
-        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(UUID.randomUUID()));
-        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(null));
-    }
-
+//    @Test
+//    public void TestDelete() throws  Exception {
+//
+//        UUID id  = challengeService.basicSearch("").get(0).getChallengeId();
+//        cr.deleteEntityById(id);
+//        assertFalse(cr.existsEntity(id));
+//
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(id));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(UUID.randomUUID()));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> challengeService.deleteChallengeById(null));
+//    }
+//
 
 }
