@@ -1,10 +1,6 @@
-package com.dm.teamquery.data.repository;
+package com.dm.teamquery.data.generic;
 
 
-import com.dm.teamquery.data.generic.GenericDao;
-import com.dm.teamquery.data.generic.SearchRequest;
-import com.dm.teamquery.data.generic.SearchResponse;
-import com.dm.teamquery.entity.Challenge;
 import com.dm.teamquery.execption.*;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -19,7 +15,6 @@ import java.util.UUID;
 @Service
 public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 
-
     // private final static Logger logger = LogManager.getLogger("ServiceLog");
 
     @PersistenceContext
@@ -28,7 +23,6 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
     @Setter
     private Class persistentClass;
 
-
     @Override
     public List<T> findAll() {
         return em.createQuery("Select t from " + persistentClass.getSimpleName() + " t").getResultList();
@@ -36,24 +30,27 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
 
     @Override
     @Transactional
-    public T save(T t) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException {
-        // this.persistentClass = t.getClass();
-        // ID id = getEntityId(t);
-        T entity = em.merge(t);
-        //  em.getTransaction().commit();
-        //em.find(t, id);
+    public T save(T t) throws InvalidEntityIdException {
 
-     //   Object x = em.find(t.getClass(), getEntityId(t));
+        return em.merge(t);
 
-        return null;
 
-//        repository.saveEntity(t);
-//        return repository.findEntityById(((Challenge) t).getChallengeId());
     }
 
     @Override
     public T findById(ID id) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException {
-        return null;
+
+        try {
+            T entity = (T) em.find(this.persistentClass, id);
+            if (null == entity) throw new EntityNotFoundException();
+            return entity;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("No entity was found for id: " + id.toString());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidEntityIdException("Unable to parse ID - bad format!", e);
+        } catch (Exception e) {
+            throw new EntityLookupException("Unhandled error occured", e);
+        }
     }
 
     @Override
