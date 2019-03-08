@@ -1,19 +1,9 @@
 package com.dm.teamquery;
 
-import com.dm.teamquery.data.ChallengeService;
-import com.dm.teamquery.data.generic.SearchRequest;
-import com.dm.teamquery.entity.Challenge;
-import com.dm.teamquery.execption.SearchFailedException;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 

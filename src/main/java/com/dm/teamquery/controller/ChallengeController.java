@@ -1,18 +1,7 @@
 package com.dm.teamquery.controller;
 
 
-import com.dm.teamquery.data.ChallengeService;
-import com.dm.teamquery.data.generic.SearchRequest;
-import com.dm.teamquery.entity.Challenge;
-import com.dm.teamquery.execption.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin

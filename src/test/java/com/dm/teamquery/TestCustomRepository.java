@@ -1,29 +1,18 @@
 package com.dm.teamquery;
 
 
-import com.dm.teamquery.data.repository.ChallengeRepository;
-import com.dm.teamquery.data.repository.GenericService;
+import com.dm.teamquery.data.repository.GenericDaoImpl;
 import com.dm.teamquery.entity.Challenge;
-
-import com.dm.teamquery.execption.EntityNotFoundException;
-import com.dm.teamquery.execption.InvalidEntityIdException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -31,75 +20,79 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestCustomRepository {
 
 
-
     @Inject
-    GenericService<Challenge, UUID> gs;
+    private GenericDaoImpl<Challenge, UUID> gs;
+
+    @PostConstruct
+    public void set() {
+        this.gs.setPersistentClass(Challenge.class);
+    }
 
     @Test
     public void nothing(){
-        List<Challenge> l = gs.findAllEntities();
+        List<Challenge> l = gs.findAll();
         System.out.println();
     }
 
-//    @Test
-//    public void TestUpdate() throws Exception {
-//
-//        Challenge c = cr.findAll().iterator().next();
-//        c.setQuestion("A new question");
-//        cr.saveEntity(c);
-//        Challenge b = cr.findEntityById(c.getChallengeId());
-//        Assert.assertEquals(b, c);
-//
-//    }
+    @Test
+    public void TestUpdate() throws Exception {
+
+        Challenge c = gs.findAll().get(0);
+        c.setAuthor("A new one");
+   //     Challenge b = gs1.saveForReal(c);
+       // b = gs.findById(c.getEntityId());
+    //    Assert.assertEquals(b, c);
+
+    }
 //
 //    @Test
 //    public void TestFind() {
-//        Assertions.assertThrows(EntityNotFoundException.class, () -> cr.findEntityById(UUID.randomUUID()));
-//        Assertions.assertThrows(InvalidEntityIdException.class, () -> cr.findEntityById(null));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> gs.findEntityById(UUID.randomUUID()));
+//        Assertions.assertThrows(InvalidEntityIdException.class, () -> gs.findEntityById(null));
 //    }
 //
 //    @Test
 //    public void TestImmutableUpdate() throws Exception {
 //
 //        gs.setPersistentClass(Challenge.class);
-//        List<Challenge> qw = gs.findAllEntities();
-//        Challenge c = cr.findAllEntities().get(0);
+//        List<Challenge> qw = gs.findAll();
+//        Challenge c = gs.findAll().get(0);
 //        String original = c.getAuthor();
 //
 //        c.setAuthor("A new author");
 //        c = gs.saveEntity(c);
-//        Challenge b = cr.findEntityById(c.getChallengeId());
+//        Challenge b = gs.findEntityById(c.getChallengeId());
 //        Assert.assertEquals(b.getAuthor(), original);
 //
-//        LocalDateTime createdOriginal = b.getCreatedDate();
+//        LocalDateTime gseatedOriginal = b.getCreatedDate();
 //        b.setCreatedDate(LocalDateTime.MIN);
-//        cr.saveEntity(b);
-//        b = cr.findEntityById(c.getChallengeId());
-//        Assert.assertEquals(b.getCreatedDate(), createdOriginal);
+//        gs.saveEntity(b);
+//        b = gs.findEntityById(c.getChallengeId());
+//        Assert.assertEquals(b.getCreatedDate(), gseatedOriginal);
 //
 //        UUID oldID = b.getChallengeId();
-//        int cursize = cr.findAllEntities().size();
+//        int cursize = gs.findAll().size();
 //        b.setChallengeId(UUID.randomUUID());
 //        b.setQuestion("Different");
-//        cr.saveEntity(b);
+//        gs.saveEntity(b);
 //
-//        assertTrue(cr.existsEntity(oldID));
-//        Assert.assertEquals(cursize + 1, cr.findAllEntities().size());
+//        assertTrue(gs.existsEntity(oldID));
+//        Assert.assertEquals(cursize + 1, gs.findAll().size());
 //    }
 //
 //    @Test
 //    public void TestBadData() {
 //
-//        Challenge c = cr.findAllEntities().get(3);
+//        Challenge c = gs.findAll().get(3);
 //
 //        c.setQuestion("");
-//        Assertions.assertThrows(ConstraintViolationException.class, () -> cr.saveEntity(c));
+//        Assertions.assertThrows(ConstraintViolationException.class, () -> gs.saveEntity(c));
 //
 //        c.setQuestion(null);
-//        Assertions.assertThrows(ConstraintViolationException.class, () -> cr.saveEntity(c));
+//        Assertions.assertThrows(ConstraintViolationException.class, () -> gs.saveEntity(c));
 //
 //        try {
-//            cr.save(new Challenge());
+//            gs.save(new Challenge());
 //        } catch (Exception e) {
 //            Throwable a = ExceptionUtils.getRootCause(e);
 //            assertTrue(a instanceof ConstraintViolationException);
@@ -115,13 +108,13 @@ public class TestCustomRepository {
 //        c.setAuthor("Carag");
 //        c.setAnswer("What is the question");
 //        c.setQuestion("What is the answer");
-//        c = cr.saveEntity(c);
+//        c = gs.saveEntity(c);
 //
 //        c.setQuestion("An update!");
 //        Thread.sleep(500);
-//        c = cr.saveEntity(c);
+//        c = gs.saveEntity(c);
 //
-//        Challenge cur = cr.findEntityById(c.getChallengeId());
+//        Challenge cur = gs.findEntityById(c.getChallengeId());
 //        assertNotEquals(cur.getLastModifiedDate(), cur.getCreatedDate());
 //    }
 //
@@ -143,13 +136,13 @@ public class TestCustomRepository {
 //    @Test
 //    public void TestDelete() throws Exception {
 //
-//        UUID id = cr.findAllEntities().get(5).getChallengeId();
-//        cr.deleteEntityById(id);
-//        assertFalse(cr.existsEntity(id));
+//        UUID id = gs.findAll().get(5).getChallengeId();
+//        gs.deleteEntityById(id);
+//        assertFalse(gs.existsEntity(id));
 //
-//        Assertions.assertThrows(EntityNotFoundException.class, () -> cr.deleteEntityById(id));
-//        Assertions.assertThrows(EntityNotFoundException.class, () -> cr.deleteEntityById(UUID.randomUUID()));
-//        Assertions.assertThrows(EntityNotFoundException.class, () -> cr.deleteEntityById(null));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> gs.deleteEntityById(id));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> gs.deleteEntityById(UUID.randomUUID()));
+//        Assertions.assertThrows(EntityNotFoundException.class, () -> gs.deleteEntityById(null));
 //    }
 
 }

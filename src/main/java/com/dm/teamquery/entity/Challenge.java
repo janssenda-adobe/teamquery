@@ -2,20 +2,16 @@ package com.dm.teamquery.entity;
 
 
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.UUID;
 
 
 @Data
 @Entity
 @Table(name = "challenge")
-public class Challenge  extends Auditable<UUID>  {
+public class Challenge  extends BaseEntity {
 
 //    @Id
 //    @Type(type="uuid-char")

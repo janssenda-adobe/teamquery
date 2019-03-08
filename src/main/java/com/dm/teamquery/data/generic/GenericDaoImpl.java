@@ -1,25 +1,23 @@
 package com.dm.teamquery.data.repository;
 
 
-import com.dm.teamquery.entity.Auditable;
+import com.dm.teamquery.data.generic.GenericDao;
+import com.dm.teamquery.data.generic.SearchRequest;
+import com.dm.teamquery.data.generic.SearchResponse;
 import com.dm.teamquery.entity.Challenge;
-import com.dm.teamquery.execption.EntityLookupException;
-import com.dm.teamquery.execption.EntityNotFoundException;
-import com.dm.teamquery.execption.InvalidEntityIdException;
+import com.dm.teamquery.execption.*;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class GenericService<T extends Auditable, ID extends Serializable> {
+public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 
 
     // private final static Logger logger = LogManager.getLogger("ServiceLog");
@@ -27,53 +25,65 @@ public class GenericService<T extends Auditable, ID extends Serializable> {
     @PersistenceContext
     private EntityManager em;
 
-    @Inject
-    private ABCRepository<Challenge, UUID> ABCRepository;
-
-//    @Inject
-//    private SearchInfoRepository searchInfoRepository;
-
     @Setter
     private Class persistentClass;
 
-    //    @PersistenceContext
-//    EntityManagerFactory em;
-//
-//
 
-
-
-    public List<Challenge> findAllEntities() {
-
-            Iterable<Challenge> results = ABCRepository.findAll();
-            List<Challenge> list = new ArrayList<>();
-            results.forEach(list::add);
-            return list;
-//
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<T> cq = cb.createQuery(persistentClass);
-//        Root<T> rootEntry = cq.from(persistentClass);
-//        CriteriaQuery<T> all = cq.select(rootEntry);
-//        TypedQuery<T> allQuery = em.createQuery(all);
-//        return allQuery.getResultList();
-     //   return em.createQuery("Select t from " + persistentClass.getSimpleName() + " t").getResultList();
+    @Override
+    public List<T> findAll() {
+        return em.createQuery("Select t from " + persistentClass.getSimpleName() + " t").getResultList();
     }
 
+    @Override
     @Transactional
-    public <S extends T> S saveEntity(T t)
-            throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException {
-       // this.persistentClass = t.getClass();
+    public T save(T t) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException {
+        // this.persistentClass = t.getClass();
         // ID id = getEntityId(t);
         T entity = em.merge(t);
-      //  em.getTransaction().commit();
+        //  em.getTransaction().commit();
         //em.find(t, id);
 
-        Object x = em.find(t.getClass(), getEntityId(t));
+     //   Object x = em.find(t.getClass(), getEntityId(t));
 
         return null;
 
 //        repository.saveEntity(t);
 //        return repository.findEntityById(((Challenge) t).getChallengeId());
+    }
+
+    @Override
+    public T findById(ID id) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException {
+        return null;
+    }
+
+    @Override
+    public void deleteById(ID id) throws EntityNotFoundException, DeleteFailedException {
+
+    }
+
+    @Override
+    public boolean existsEntity(ID id) {
+        return false;
+    }
+
+    @Override
+    public boolean existsEntity(T entity) {
+        return false;
+    }
+
+    @Override
+    public List<T> basicSearch(String query) throws SearchFailedException {
+        return null;
+    }
+
+    @Override
+    public SearchResponse search(SearchRequest request) throws SearchFailedException {
+        return null;
+    }
+
+    @Override
+    public long count(String query) {
+        return 0;
     }
 //
 //    public void deleteById(UUID id)

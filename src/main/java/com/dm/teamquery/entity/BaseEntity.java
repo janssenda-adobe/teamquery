@@ -12,7 +12,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,7 +19,17 @@ import java.util.UUID;
 @Getter @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Auditable<ID extends Serializable> {
+public abstract class BaseEntity {
+
+    @Id
+    @Type(type="uuid-char")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "entityid")
+    private UUID entityId;
 
     @CreatedDate
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -35,15 +44,5 @@ public abstract class Auditable<ID extends Serializable> {
     @NotNull
     @Column(name = "enabled")
     private Boolean enabled = true;
-
-    @Id
-    @Type(type="uuid-char")
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "challengeid")
-    private ID challengeId;
 
 }

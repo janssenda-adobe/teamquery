@@ -1,9 +1,9 @@
-package com.dm.teamquery.data;
+package com.dm.teamquery.ref;
 
 
 import com.dm.teamquery.data.generic.SearchRequest;
 import com.dm.teamquery.data.generic.SearchResponse;
-import com.dm.teamquery.data.repository.ChallengeRepository;
+
 import com.dm.teamquery.entity.Challenge;
 import com.dm.teamquery.execption.*;
 import com.dm.teamquery.search.Search;
