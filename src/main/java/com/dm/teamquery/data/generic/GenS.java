@@ -1,49 +1,90 @@
 package com.dm.teamquery.data.generic;
 
-import lombok.Setter;
-import org.springframework.data.repository.core.EntityInformation;
+import com.dm.teamquery.execption.EntityLookupException;
+import com.dm.teamquery.execption.EntityNotFoundException;
+import com.dm.teamquery.execption.InvalidEntityIdException;
+import com.dm.teamquery.execption.TeamQueryException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.List;
 
 @Component
-public class GenericDaoImpl<T, ID extends Serializable> {
+public class GenS<T, ID extends Serializable> {
 
-    @PersistenceContext
-    private EntityManager em;
+    @Inject
+    GenericDaoImpl<T, ID> gd;
 
-
-    @Setter
     private Class persistentClass;
 
+    public void setPersistentClass(Class<T> persistentClass) {
+        this.persistentClass = persistentClass;
+        gd.setPersistentClass(persistentClass);
+    }
+
     public List<T> findAll() {
-        return em.createQuery("Select t from " + persistentClass.getSimpleName() + " t").getResultList();
+        return gd.findAll();
     }
 
-    public T findById(ID id) {return (T) em.find(this.persistentClass, id);}
-    public T find(T t) {return findById(getEntityId(t));}
+    public T findById(ID id) throws TeamQueryException {
+        try {
+            T entity = gd.findById(id);
+            if (null == entity) throw new EntityNotFoundException();
+            return entity;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("No entity was found for id: " + id.toString());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidEntityIdException("Unable to parse ID - bad format!", e);
+        } catch (Exception e) {
+            throw new EntityLookupException("Unhandled exception: ", e);
+        }
+    }
+//
+//    @Transactional
+//    public void deleteById(ID id) throws TeamQueryException {
+//        T entity = findById(id);
+//        try {
+//            em.remove(entity);
+//        } catch (Exception e) {
+//            throw new DeleteFailedException(e);
+//        }
+//    }
+//
+//    public List<T> findAll() {
+//        return em.createQuery("Select t from " + persistentClass.getSimpleName() + " t").getResultList();
+//    }
+//
 
-    @Transactional
-    public void delete(T t) {em.remove(t);}
-
-    @Transactional
     public T save(T t) {
-        return em.merge(t);
+        try {
+            t = gd.save(t);
+            return gd.find(t);
+        } catch (Exception e) {
+            Throwable x = ExceptionUtils.getRootCause(e);
+        }
+        return null;
     }
-
-    public boolean existsEntity(ID id) {return null != findById(id);}
-
-    public boolean existsEntity(T t) {return existsEntity(getEntityId(t));}
-
-    public ID getEntityId(T t) {
-        return (ID) em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(t);
-    }
-
+//
+//    public boolean existsEntity(ID id) {
+//        try {
+//            findById(id);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+//
+//    public boolean existsEntity(T t) {
+//        return existsEntity(getEntityId(t));
+//    }
+//
+//    public ID getEntityId(T t) {
+//        return (ID) em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(t);
+//    }
+//
 //    public List<T> basicSearch(String query) throws SearchFailedException {
 //        return null;
 //    }

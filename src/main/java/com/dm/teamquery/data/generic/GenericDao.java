@@ -8,9 +8,9 @@ import java.util.List;
 public interface GenericDao<T, ID extends Serializable> {
 
     List<T> findAll();
-    T save(T entity) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException;
-    T findById(ID id) throws EntityNotFoundException, InvalidEntityIdException, EntityLookupException;
-    void deleteById(ID id) throws EntityNotFoundException, DeleteFailedException;
+    T save(T entity) throws TeamQueryException;
+    T findById(ID id) throws TeamQueryException;
+    void deleteById(ID id) throws TeamQueryException;
 
     boolean existsEntity(ID id);
     boolean existsEntity(T entity);
